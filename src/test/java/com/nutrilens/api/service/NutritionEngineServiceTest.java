@@ -151,4 +151,49 @@ class NutritionEngineServiceTest {
         assertEquals("Breakfast", dto.getCategory());
         assertEquals(new BigDecimal("294"), dto.getKcal());
     }
+
+    @Test
+    @DisplayName("Should detect and summarize multiple instances of the same food (e.g. 2 Boiled Eggs)")
+    void testAnalyzeMultiVolumetricTwoBoiledEggs() {
+        FoodDensity boiledEgg = FoodDensity.builder()
+                .id(14L)
+                .foodCode("BOILED_EGG")
+                .displayName("Trứng Gà Luộc")
+                .densityGramsPerCm3(new BigDecimal("1.0300"))
+                .kcalPer100g(new BigDecimal("155.00"))
+                .proteinPer100g(new BigDecimal("13.00"))
+                .carbPer100g(new BigDecimal("1.10"))
+                .fatPer100g(new BigDecimal("11.00"))
+                .isActive(true)
+                .build();
+
+        when(foodDensityRepository.findByFoodCodeAndIsActiveTrue("BOILED_EGG"))
+                .thenReturn(Optional.of(boiledEgg));
+
+        com.nutrilens.api.dto.request.VolumetricComponentItemDTO egg1 = com.nutrilens.api.dto.request.VolumetricComponentItemDTO.builder()
+                .foodCode("BOILED_EGG")
+                .volumeCm3(new BigDecimal("48.54")) // 50g per egg
+                .portionRatio(BigDecimal.ONE)
+                .build();
+
+        com.nutrilens.api.dto.request.VolumetricComponentItemDTO egg2 = com.nutrilens.api.dto.request.VolumetricComponentItemDTO.builder()
+                .foodCode("BOILED_EGG")
+                .volumeCm3(new BigDecimal("48.54"))
+                .portionRatio(BigDecimal.ONE)
+                .build();
+
+        com.nutrilens.api.dto.request.MultiVolumetricNutritionRequestDTO req = com.nutrilens.api.dto.request.MultiVolumetricNutritionRequestDTO.builder()
+                .components(List.of(egg1, egg2))
+                .userWeightKg(new BigDecimal("65.0"))
+                .build();
+
+        com.nutrilens.api.dto.response.MultiNutritionAnalysisResponseDTO res = nutritionEngineService.analyzeMultiVolumetricPortion(req);
+
+        assertNotNull(res);
+        assertEquals(2, res.getTotalComponentsCount());
+        assertEquals("2x Trứng Gà Luộc", res.getSummaryTitle());
+        assertEquals(new BigDecimal("100.00"), res.getTotalEstimatedWeightGrams());
+        assertEquals(new BigDecimal("155.0"), res.getTotalCaloriesKcal());
+        assertEquals(new BigDecimal("13.00"), res.getTotalProteinGrams());
+    }
 }

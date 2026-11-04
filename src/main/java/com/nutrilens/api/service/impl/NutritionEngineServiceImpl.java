@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -386,7 +387,22 @@ public class NutritionEngineServiceImpl implements NutritionEngineService {
         int runningMinutes = computeExerciseDuration(totalCalories, RUNNING_MET, request.getUserWeightKg());
         int walkingMinutes = computeExerciseDuration(totalCalories, WALKING_MET, request.getUserWeightKg());
 
+        // Generate clean summary title for identical (e.g. 2x Boiled Egg) or mixed components
+        Map<String, Long> codeFrequencies = request.getComponents().stream()
+                .collect(Collectors.groupingBy(VolumetricComponentItemDTO::getFoodCode, Collectors.counting()));
+
+        String summaryTitle;
+        if (codeFrequencies.size() == 1) {
+            String singleCode = codeFrequencies.keySet().iterator().next();
+            long count = codeFrequencies.get(singleCode);
+            String dName = componentResults.isEmpty() ? singleCode : componentResults.get(0).getDisplayName();
+            summaryTitle = (count > 1 ? count + "x " : "") + dName;
+        } else {
+            summaryTitle = "Đĩa đa thành phần (" + componentResults.size() + " món)";
+        }
+
         return MultiNutritionAnalysisResponseDTO.builder()
+                .summaryTitle(summaryTitle)
                 .totalComponentsCount(componentResults.size())
                 .totalEffectiveVolumeCm3(totalEffectiveVolume)
                 .totalEstimatedWeightGrams(totalEstimatedWeight)

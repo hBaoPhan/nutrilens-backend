@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MultiNutritionAnalysisResponseDTO {
 
+    private String summaryTitle;
     private Integer totalComponentsCount;
     private BigDecimal totalEffectiveVolumeCm3;
     private BigDecimal totalEstimatedWeightGrams;
@@ -25,6 +26,8 @@ public class MultiNutritionAnalysisResponseDTO {
     private Integer briskWalkingMinutesNeeded;
     private List<ComponentNutritionResultDTO> components;
 
+    public String getSummaryTitle() { return summaryTitle; }
+    public void setSummaryTitle(String summaryTitle) { this.summaryTitle = summaryTitle; }
     public Integer getTotalComponentsCount() { return totalComponentsCount; }
     public void setTotalComponentsCount(Integer totalComponentsCount) { this.totalComponentsCount = totalComponentsCount; }
     public BigDecimal getTotalEffectiveVolumeCm3() { return totalEffectiveVolumeCm3; }
@@ -49,6 +52,7 @@ public class MultiNutritionAnalysisResponseDTO {
     public static Builder builder() { return new Builder(); }
 
     public static class Builder {
+        private String summaryTitle;
         private Integer totalComponentsCount;
         private BigDecimal totalEffectiveVolumeCm3;
         private BigDecimal totalEstimatedWeightGrams;
@@ -60,6 +64,7 @@ public class MultiNutritionAnalysisResponseDTO {
         private Integer briskWalkingMinutesNeeded;
         private List<ComponentNutritionResultDTO> components;
 
+        public Builder summaryTitle(String summaryTitle) { this.summaryTitle = summaryTitle; return this; }
         public Builder totalComponentsCount(Integer totalComponentsCount) { this.totalComponentsCount = totalComponentsCount; return this; }
         public Builder totalEffectiveVolumeCm3(BigDecimal totalEffectiveVolumeCm3) { this.totalEffectiveVolumeCm3 = totalEffectiveVolumeCm3; return this; }
         public Builder totalEstimatedWeightGrams(BigDecimal totalEstimatedWeightGrams) { this.totalEstimatedWeightGrams = totalEstimatedWeightGrams; return this; }
@@ -73,6 +78,7 @@ public class MultiNutritionAnalysisResponseDTO {
 
         public MultiNutritionAnalysisResponseDTO build() {
             MultiNutritionAnalysisResponseDTO dto = new MultiNutritionAnalysisResponseDTO();
+            dto.summaryTitle = this.summaryTitle;
             dto.totalComponentsCount = this.totalComponentsCount;
             dto.totalEffectiveVolumeCm3 = this.totalEffectiveVolumeCm3;
             dto.totalEstimatedWeightGrams = this.totalEstimatedWeightGrams;
