@@ -30,3 +30,4 @@ app:
   jwt:
     secret: ${JWT_SECRET:9a7f8e6d5c4b3a210fedcba9876543210123456789abcdef0123456789abcdef}
     expiration-ms: 86400000 # 24 hours
+  ai-service-url: ${AI_SERVICE_URL:http://localhost:8000}

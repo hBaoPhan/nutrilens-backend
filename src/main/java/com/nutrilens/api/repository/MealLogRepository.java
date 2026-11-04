@@ -15,6 +15,9 @@ public interface MealLogRepository extends JpaRepository<MealLog, Long> {
     List<MealLog> findByUserIdOrderByLoggedAtDesc(Long userId);
     List<MealLog> findByUserUsernameOrderByLoggedAtDesc(String username);
 
+    List<MealLog> findByUserIdAndLoggedAtBetween(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+    List<MealLog> findByUserUsernameAndLoggedAtBetween(String username, LocalDateTime startDate, LocalDateTime endDate);
+
     @Query("SELECT m FROM MealLog m WHERE " +
            "(:username IS NULL OR LOWER(m.user.username) = LOWER(:username)) AND " +
            "(:startDate IS NULL OR m.loggedAt >= :startDate) AND " +
