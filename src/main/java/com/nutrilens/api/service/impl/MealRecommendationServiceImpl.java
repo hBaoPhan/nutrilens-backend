@@ -169,12 +169,10 @@ public class MealRecommendationServiceImpl implements MealRecommendationService 
             Optional<User> u = userRepository.findById(userId);
             if (u.isPresent()) return u.get();
         }
-        return userRepository.findByUsername("user1")
-                .or(() -> userRepository.findAll().stream().findFirst())
+        return userRepository.findAll().stream().findFirst()
                 .orElseGet(() -> User.builder()
-                        .id(2L)
-                        .username("user1")
-                        .fullName("Nguyễn Văn An")
+                        .username("guest")
+                        .fullName("Khách (Chưa đăng nhập)")
                         .weightKg(new BigDecimal("65.00"))
                         .heightCm(new BigDecimal("170.00"))
                         .dailyCalorieGoal(2000)

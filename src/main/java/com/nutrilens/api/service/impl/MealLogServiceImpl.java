@@ -52,88 +52,6 @@ public class MealLogServiceImpl implements MealLogService {
         this.foodDensityRepository = foodDensityRepository;
     }
 
-    @PostConstruct
-    public void seedInitialMealLogs() {
-        if (mealLogRepository.count() == 0) {
-            log.info("No meal logs found. Seeding initial AR meal logs for testing...");
-            User user1 = userRepository.findByUsername("user1").orElse(null);
-            if (user1 != null) {
-                createSeedLog(user1, "BREAKFAST", LocalDateTime.now().minusHours(4),
-                        "Bữa sáng Eat-Clean quét AR: Salad trứng & Dứa tráng miệng",
-                        List.of("SALAD_EGG", "GREEN_VEG", "PINEAPPLE"));
-                createSeedLog(user1, "LUNCH", LocalDateTime.now().minusDays(1).withHour(12).withMinute(15),
-                        "Bữa trưa công sở nạp năng lượng: Cơm tấm sườn & Salad ức gà",
-                        List.of("COM_TAM", "CHICKEN_SALAD"));
-                createSeedLog(user1, "DINNER", LocalDateTime.now().minusDays(1).withHour(19).withMinute(0),
-                        "Bữa tối nhẹ bụng giàu Omega-3: Cá hồi nướng măng tây",
-                        List.of("SALMON_STEAK", "CANH_CHUA_CA_HOI"));
-            }
-        }
-    }
-
-    private void createSeedLog(User user, String mealType, LocalDateTime time, String notes, List<String> foodCodes) {
-        MealLog logEntity = new MealLog();
-        logEntity.setUser(user);
-        logEntity.setMealType(mealType);
-        logEntity.setLoggedAt(time);
-        logEntity.setUserNotes(notes);
-        logEntity.setArSnapshotUrl("https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600");
-
-        BigDecimal totalVol = BigDecimal.ZERO;
-        BigDecimal totalWeight = BigDecimal.ZERO;
-        BigDecimal totalKcal = BigDecimal.ZERO;
-        BigDecimal totalP = BigDecimal.ZERO;
-        BigDecimal totalC = BigDecimal.ZERO;
-        BigDecimal totalF = BigDecimal.ZERO;
-
-        List<MealItem> items = new ArrayList<>();
-        for (String code : foodCodes) {
-            FoodDensity fd = foodDensityRepository.findByFoodCode(code).orElse(null);
-            if (fd != null) {
-                BigDecimal weight = fd.getServingWeightG() != null ? fd.getServingWeightG() : BigDecimal.valueOf(100);
-                BigDecimal vol = fd.getServingVolumeCm3() != null ? fd.getServingVolumeCm3() : BigDecimal.valueOf(150);
-                BigDecimal factor = weight.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
-
-                BigDecimal kcal = fd.getKcalPer100g().multiply(factor).setScale(1, RoundingMode.HALF_UP);
-                BigDecimal p = fd.getProteinPer100g().multiply(factor).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal c = fd.getCarbPer100g().multiply(factor).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal f = fd.getFatPer100g().multiply(factor).setScale(2, RoundingMode.HALF_UP);
-
-                MealItem item = MealItem.builder()
-                        .mealLog(logEntity)
-                        .foodDensity(fd)
-                        .rawVolumeCm3(vol)
-                        .portionRatio(BigDecimal.ONE)
-                        .effectiveVolumeCm3(vol)
-                        .estimatedWeightG(weight)
-                        .calculatedKcal(kcal)
-                        .proteinG(p)
-                        .carbG(c)
-                        .fatG(f)
-                        .confidenceScore(new BigDecimal("0.965"))
-                        .build();
-
-                items.add(item);
-                totalVol = totalVol.add(vol);
-                totalWeight = totalWeight.add(weight);
-                totalKcal = totalKcal.add(kcal);
-                totalP = totalP.add(p);
-                totalC = totalC.add(c);
-                totalF = totalF.add(f);
-            }
-        }
-
-        logEntity.setTotalVolumeCm3(totalVol);
-        logEntity.setTotalWeightG(totalWeight);
-        logEntity.setTotalKcal(totalKcal);
-        logEntity.setTotalProteinG(totalP);
-        logEntity.setTotalCarbG(totalC);
-        logEntity.setTotalFatG(totalF);
-        logEntity.setItems(items);
-
-        mealLogRepository.save(logEntity);
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<MealLogResponseDTO> getRecentMealLogs(Long userId, String username) {
@@ -193,8 +111,8 @@ public class MealLogServiceImpl implements MealLogService {
             user = userRepository.findByUsername(request.getUsername().trim()).orElse(null);
         }
         if (user == null) {
-            user = userRepository.findByUsername("admin").orElseGet(() ->
-                    userRepository.findAll().stream().findFirst().orElse(null));
+            String userIdent = request.getUsername() != null ? request.getUsername() : String.valueOf(request.getUserId());
+            throw new EntityNotFoundException("User not found for meal log: '" + userIdent + "'. Please register or log in first.");
         }
 
         MealLog logEntity = new MealLog();
