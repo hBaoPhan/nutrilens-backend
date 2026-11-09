@@ -65,6 +65,11 @@ public class NutritionEngineServiceImpl implements NutritionEngineService {
                 new BigDecimal("14.67"), new BigDecimal("3.33"), new BigDecimal("150.00"),
                 new BigDecimal("160.00"), "🥣", "salad", "#FFEFE6", "#F37340", false);
 
+        seedFoodItem("COM_TAM", "Cơm Tấm Sườn Bì Chả", "Lunch",
+                new BigDecimal("1.0857"), new BigDecimal("171.05"), new BigDecimal("10.00"),
+                new BigDecimal("18.95"), new BigDecimal("6.32"), new BigDecimal("380.00"),
+                new BigDecimal("350.00"), "🍚", "salad", "#FFEBE0", "#D95933", false);
+
         seedFoodItem("BROKEN_RICE", "Cơm Tấm Sườn Bì Chả", "Lunch",
                 new BigDecimal("1.0857"), new BigDecimal("171.05"), new BigDecimal("10.00"),
                 new BigDecimal("18.95"), new BigDecimal("6.32"), new BigDecimal("380.00"),
@@ -79,6 +84,11 @@ public class NutritionEngineServiceImpl implements NutritionEngineService {
                 new BigDecimal("0.8500"), new BigDecimal("130.00"), new BigDecimal("2.70"),
                 new BigDecimal("28.20"), new BigDecimal("0.30"), new BigDecimal("200.00"),
                 new BigDecimal("235.00"), "🍚", "salad", "#F4F6F8", "#4A5568", false);
+
+        seedFoodItem("PHO_BO", "Phở Bò Tái Nạm", "Dinner",
+                new BigDecimal("1.1250"), new BigDecimal("115.56"), new BigDecimal("7.11"),
+                new BigDecimal("12.89"), new BigDecimal("3.56"), new BigDecimal("450.00"),
+                new BigDecimal("400.00"), "🍜", "vegetable", "#EBF3FF", "#3380D9", false);
 
         seedFoodItem("BEEF_PHO", "Phở Bò Tái Nạm", "Dinner",
                 new BigDecimal("1.1250"), new BigDecimal("115.56"), new BigDecimal("7.11"),
@@ -188,7 +198,22 @@ public class NutritionEngineServiceImpl implements NutritionEngineService {
                 new BigDecimal("28.20"), new BigDecimal("0.30"), new BigDecimal("200.00"),
                 new BigDecimal("266.67"), "🍚", "grain", "#F8F9F9", "#566573", false);
 
-        log.info("Initialized NutriLens Food Database seeds (28 food items across Composite Dishes & Atomic Ingredients).");
+        seedFoodItem("COCONUT", "Dừa Tươi / Cùi Dừa", "Breakfast", "ATOMIC_INGREDIENT",
+                new BigDecimal("0.9800"), new BigDecimal("354.00"), new BigDecimal("3.30"),
+                new BigDecimal("15.20"), new BigDecimal("33.50"), new BigDecimal("100.00"),
+                new BigDecimal("102.04"), "🥥", "salad", "#F5EEF8", "#8E44AD", false);
+
+        seedFoodItem("SUA_CHUA", "Sữa Chua Tự Nhiên", "Breakfast", "ATOMIC_INGREDIENT",
+                new BigDecimal("1.0300"), new BigDecimal("61.00"), new BigDecimal("3.50"),
+                new BigDecimal("4.70"), new BigDecimal("3.30"), new BigDecimal("100.00"),
+                new BigDecimal("97.09"), "🥛", "salad", "#EBF5FB", "#3498DB", false);
+
+        seedFoodItem("WATERMELON", "Dưa Hấu Đỏ Tươi", "Breakfast", "ATOMIC_INGREDIENT",
+                new BigDecimal("0.9600"), new BigDecimal("30.00"), new BigDecimal("0.60"),
+                new BigDecimal("7.60"), new BigDecimal("0.20"), new BigDecimal("250.00"),
+                new BigDecimal("260.42"), "🍉", "salad", "#FDEDEC", "#E74C3C", false);
+
+        log.info("Initialized NutriLens Food Database seeds (34 food items across Composite Dishes & Atomic Ingredients).");
     }
 
     private void seedFoodItem(String foodCode, String displayName, String category,

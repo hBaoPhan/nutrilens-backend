@@ -43,8 +43,8 @@ public class MealRecommendationServiceImpl implements MealRecommendationService 
     private String aiServiceUrl;
 
     private final RestTemplate restTemplate = new RestTemplateBuilder()
-            .setConnectTimeout(Duration.ofMillis(3000))
-            .setReadTimeout(Duration.ofMillis(4000))
+            .setConnectTimeout(Duration.ofMillis(5000))
+            .setReadTimeout(Duration.ofMillis(12000))
             .build();
 
     public MealRecommendationServiceImpl(UserRepository userRepository,

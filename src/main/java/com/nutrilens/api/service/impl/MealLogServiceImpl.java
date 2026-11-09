@@ -63,7 +63,7 @@ public class MealLogServiceImpl implements MealLogService {
                         List.of("SALAD_EGG", "GREEN_VEG", "PINEAPPLE"));
                 createSeedLog(user1, "LUNCH", LocalDateTime.now().minusDays(1).withHour(12).withMinute(15),
                         "Bữa trưa công sở nạp năng lượng: Cơm tấm sườn & Salad ức gà",
-                        List.of("BROKEN_RICE", "CHICKEN_SALAD"));
+                        List.of("COM_TAM", "CHICKEN_SALAD"));
                 createSeedLog(user1, "DINNER", LocalDateTime.now().minusDays(1).withHour(19).withMinute(0),
                         "Bữa tối nhẹ bụng giàu Omega-3: Cá hồi nướng măng tây",
                         List.of("SALMON_STEAK", "CANH_CHUA_CA_HOI"));
