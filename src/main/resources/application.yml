@@ -31,9 +31,3 @@ app:
     secret: ${JWT_SECRET:9a7f8e6d5c4b3a210fedcba9876543210123456789abcdef0123456789abcdef}
     expiration-ms: 86400000 # 24 hours
   ai-service-url: ${AI_SERVICE_URL:http://localhost:8000}
-  bootstrap:
-    admin:
-      enabled: ${APP_BOOTSTRAP_ADMIN_ENABLED:false}
-      username: ${APP_BOOTSTRAP_ADMIN_USERNAME:}
-      password: ${APP_BOOTSTRAP_ADMIN_PASSWORD:}
-      email: ${APP_BOOTSTRAP_ADMIN_EMAIL:admin@nutrilens.com}

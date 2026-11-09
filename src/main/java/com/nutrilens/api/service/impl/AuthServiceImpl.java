@@ -9,10 +9,8 @@ import com.nutrilens.api.exception.EntityNotFoundException;
 import com.nutrilens.api.repository.UserRepository;
 import com.nutrilens.api.security.JwtTokenProvider;
 import com.nutrilens.api.service.AuthService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,55 +28,10 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${app.bootstrap.admin.enabled:false}")
-    private boolean bootstrapAdminEnabled;
-
-    @Value("${app.bootstrap.admin.username:}")
-    private String bootstrapAdminUsername;
-
-    @Value("${app.bootstrap.admin.password:}")
-    private String bootstrapAdminPassword;
-
-    @Value("${app.bootstrap.admin.email:admin@nutrilens.com}")
-    private String bootstrapAdminEmail;
-
     public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
-    }
-
-    @PostConstruct
-    public void bootstrapAdminIfConfigured() {
-        if (!bootstrapAdminEnabled) {
-            log.info("[AUTH SERVICE] Default account auto-creation is disabled (app.bootstrap.admin.enabled=false). Users must register via /api/v1/auth/register.");
-            return;
-        }
-
-        if (bootstrapAdminUsername == null || bootstrapAdminUsername.trim().isEmpty() ||
-            bootstrapAdminPassword == null || bootstrapAdminPassword.trim().isEmpty()) {
-            log.warn("[AUTH SERVICE] Admin bootstrap is enabled but APP_BOOTSTRAP_ADMIN_USERNAME or APP_BOOTSTRAP_ADMIN_PASSWORD is empty. Skipping admin creation.");
-            return;
-        }
-
-        String username = bootstrapAdminUsername.trim();
-        User admin = userRepository.findByUsername(username).orElse(null);
-        if (admin == null) {
-            admin = User.builder()
-                    .username(username)
-                    .email(bootstrapAdminEmail != null && !bootstrapAdminEmail.trim().isEmpty() ? bootstrapAdminEmail.trim() : username + "@nutrilens.com")
-                    .passwordHash(passwordEncoder.encode(bootstrapAdminPassword))
-                    .fullName("NutriLens System Administrator")
-                    .weightKg(new BigDecimal("70.00"))
-                    .heightCm(new BigDecimal("175.00"))
-                    .role("ROLE_ADMIN")
-                    .isActive(true)
-                    .build();
-            userRepository.save(admin);
-            log.info("[AUTH SERVICE] Securely bootstrapped admin user '{}' from environment configuration.", username);
-        } else {
-            log.info("[AUTH SERVICE] Admin user '{}' already exists in database. Preserving existing record.", username);
-        }
     }
 
     @Override
