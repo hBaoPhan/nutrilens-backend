@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/nutrition/tips")
+@RequestMapping({"/api/nutrition/tips", "/api/v1/tips", "/api/tips"})
 @RequiredArgsConstructor
 @Slf4j
 public class NutritionTipController {
@@ -22,27 +22,27 @@ public class NutritionTipController {
     private final NutritionTipService nutritionTipService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<NutritionTipResponseDTO>>> getTips(
+    public ResponseEntity<List<NutritionTipResponseDTO>> getTips(
             @RequestParam(required = false, defaultValue = "ALL") String targetGoal) {
         List<NutritionTipResponseDTO> tips = nutritionTipService.getAllActiveTips(targetGoal);
-        return ResponseEntity.ok(ApiResponse.success(tips, "Retrieved " + tips.size() + " tips"));
+        return ResponseEntity.ok(tips);
     }
 
     @GetMapping("/random")
-    public ResponseEntity<ApiResponse<NutritionTipResponseDTO>> getRandomTip() {
+    public ResponseEntity<NutritionTipResponseDTO> getRandomTip() {
         NutritionTipResponseDTO tip = nutritionTipService.getRandomTip();
-        return ResponseEntity.ok(ApiResponse.success(tip, "Random tip retrieved"));
+        return ResponseEntity.ok(tip);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<NutritionTipResponseDTO>> createTip(@Valid @RequestBody CreateNutritionTipRequestDTO request) {
+    public ResponseEntity<NutritionTipResponseDTO> createTip(@Valid @RequestBody CreateNutritionTipRequestDTO request) {
         NutritionTipResponseDTO tip = nutritionTipService.createTip(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(tip, "Nutrition tip created"));
+        return ResponseEntity.status(HttpStatus.CREATED).body(tip);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTip(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTip(@PathVariable Long id) {
         nutritionTipService.deleteTip(id);
-        return ResponseEntity.ok(ApiResponse.success(null, "Nutrition tip deleted"));
+        return ResponseEntity.noContent().build();
     }
 }

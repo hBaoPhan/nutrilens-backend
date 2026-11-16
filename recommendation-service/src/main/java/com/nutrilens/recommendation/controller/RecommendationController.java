@@ -14,7 +14,12 @@ public class RecommendationController {
 
     private final MealRecommendationService mealRecommendationService;
 
-    @GetMapping({"/api/recommendations/next-meal", "/api/v1/recommendations/next-meal"})
+    @GetMapping({
+            "/api/recommendations/next-meal",
+            "/api/v1/recommendations/next-meal",
+            "/api/nutrition/recommendations/next-meal",
+            "/api/v1/nutrition/recommendations/next-meal"
+    })
     public ResponseEntity<MealRecommendationResponseDTO> getNextMealRecommendation(
             @RequestParam(required = false) String username,
             @RequestHeader(value = "X-User-Username", required = false) String authUser) {

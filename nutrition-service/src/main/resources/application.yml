@@ -5,7 +5,7 @@ spring:
   application:
     name: nutrition-service
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3308}/nutrilens_nutrition_db?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3308}/nutrilens_nutrition_db?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:root_secret_dev}
     driver-class-name: com.mysql.cj.jdbc.Driver

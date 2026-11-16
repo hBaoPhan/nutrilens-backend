@@ -14,39 +14,46 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/nutrition")
+@RequestMapping({"/api/nutrition", "/api/v1/nutrition"})
 @RequiredArgsConstructor
 @Slf4j
 public class NutritionEngineController {
 
     private final NutritionEngineService nutritionEngineService;
 
-    @PostMapping("/resolve-volume")
-    public ResponseEntity<ApiResponse<NutritionAnalysisResponseDTO>> resolveVolume(
+    @PostMapping({"/resolve-volume", "/volumetric-analyze"})
+    public ResponseEntity<NutritionAnalysisResponseDTO> resolveVolume(
             @Valid @RequestBody VolumetricNutritionRequestDTO request) {
         log.info("[NUTRITION SERVICE] Resolving volume for food code: {}, volume: {} cm3", request.getFoodCode(), request.getVolumeCm3());
         NutritionAnalysisResponseDTO response = nutritionEngineService.analyzeVolumetricPortion(request);
-        return ResponseEntity.ok(ApiResponse.success(response, "Volumetric portion analysis resolved"));
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/resolve-volume-multi")
-    public ResponseEntity<ApiResponse<MultiNutritionAnalysisResponseDTO>> resolveVolumeMulti(
+    @PostMapping({"/resolve-volume-multi", "/multi-volumetric-analyze"})
+    public ResponseEntity<MultiNutritionAnalysisResponseDTO> resolveVolumeMulti(
             @Valid @RequestBody MultiVolumetricNutritionRequestDTO request) {
         log.info("[NUTRITION SERVICE] Resolving multi-component volume (count: {})", request.getComponents().size());
         MultiNutritionAnalysisResponseDTO response = nutritionEngineService.analyzeMultiVolumetricPortion(request);
-        return ResponseEntity.ok(ApiResponse.success(response, "Multi-component volumetric analysis resolved"));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/foods")
-    public ResponseEntity<ApiResponse<List<FoodItemResponseDTO>>> getFoods(
+    public ResponseEntity<List<FoodItemResponseDTO>> getFoods(
             @RequestParam(required = false, defaultValue = "ALL") String category) {
         List<FoodItemResponseDTO> foods = nutritionEngineService.getActiveFoods(category);
-        return ResponseEntity.ok(ApiResponse.success(foods, "Retrieved " + foods.size() + " active foods"));
+        return ResponseEntity.ok(foods);
     }
 
     // =========================================================================
     // Internal Microservice Endpoints (Invoked via OpenFeign)
     // =========================================================================
+    @GetMapping("/internal/foods")
+    public ResponseEntity<List<FoodItemDTO>> getAllInternalFoods(
+            @RequestParam(required = false, defaultValue = "ALL") String category) {
+        List<FoodItemDTO> dtos = nutritionEngineService.getActiveFoodDTOs(category);
+        return ResponseEntity.ok(dtos);
+    }
+
     @GetMapping("/internal/foods/{foodCode}")
     public ResponseEntity<FoodItemDTO> getInternalFoodByCode(@PathVariable String foodCode) {
         FoodItemDTO dto = nutritionEngineService.getFoodByCode(foodCode);

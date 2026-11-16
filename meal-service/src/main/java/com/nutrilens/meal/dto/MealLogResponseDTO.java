@@ -20,6 +20,7 @@ public class MealLogResponseDTO {
     private String username;
     private String userFullName;
     private String mealType;
+    private String foodName;
     private LocalDateTime loggedAt;
     private String loggedAtDisplay;
     private BigDecimal totalVolumeCm3;

@@ -203,6 +203,12 @@ public class MealLogServiceImpl implements MealLogService {
         ).collect(Collectors.toList());
 
         String displayTime = log.getLoggedAt() != null ? log.getLoggedAt().format(DATE_FORMATTER) : "";
+        String derivedFoodName = (log.getItems() != null && !log.getItems().isEmpty())
+                ? log.getItems().stream()
+                        .map(MealItem::getFoodName)
+                        .filter(name -> name != null && !name.isBlank())
+                        .collect(Collectors.joining(", "))
+                : "Bữa ăn dinh dưỡng";
 
         return MealLogResponseDTO.builder()
                 .id(log.getId())
@@ -210,6 +216,7 @@ public class MealLogServiceImpl implements MealLogService {
                 .username(log.getUsername())
                 .userFullName(log.getUsername())
                 .mealType(log.getMealType())
+                .foodName(derivedFoodName)
                 .loggedAt(log.getLoggedAt())
                 .loggedAtDisplay(displayTime)
                 .totalVolumeCm3(log.getTotalVolumeCm3())

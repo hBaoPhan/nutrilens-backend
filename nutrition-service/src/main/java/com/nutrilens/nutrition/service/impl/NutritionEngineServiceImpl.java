@@ -8,7 +8,6 @@ import com.nutrilens.nutrition.dto.*;
 import com.nutrilens.nutrition.entity.FoodDensity;
 import com.nutrilens.nutrition.repository.FoodDensityRepository;
 import com.nutrilens.nutrition.service.NutritionEngineService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,55 +32,6 @@ public class NutritionEngineServiceImpl implements NutritionEngineService {
     private static final BigDecimal OXYGEN_FACTOR = BigDecimal.valueOf(3.5);
     private static final BigDecimal MET_DIVISOR = BigDecimal.valueOf(200);
 
-    @PostConstruct
-    public void seedInitialFoodDensities() {
-        if (foodDensityRepository.count() > 0) return;
-
-        seedFood("SALAD_EGG", "Salad Trứng Luộc Rau Mầm", "Breakfast", "COMPOSITE_DISH", 0.5556, 294.0, 25.0, 21.0, 14.0, 100.0, 180.0, "🥗", "salad", "#FFEFE6", "#F37340", false);
-        seedFood("GREEN_VEG", "Green vegetable", "Breakfast", "COMPOSITE_DISH", 0.8333, 197.0, 13.5, 16.0, 21.0, 200.0, 240.0, "🥦", "vegetable", "#E8F8ED", "#27AE60", true);
-        seedFood("PINEAPPLE", "Slice of Pineapple", "Breakfast", "COMPOSITE_DISH", 0.4762, 457.0, 84.0, 95.0, 72.0, 100.0, 210.0, "🍍", "pineapple", "#FFF7E0", "#F2C94C", false);
-        seedFood("GREEK_YOGURT", "Sữa Chua Hy Lạp Trái Cây", "Breakfast", "COMPOSITE_DISH", 0.9375, 140.0, 12.0, 14.67, 3.33, 150.0, 160.0, "🥣", "salad", "#FFEFE6", "#F37340", false);
-        seedFood("OATMEAL_BERRY", "Yến Mạch Việt Quất & Hạt Chia", "Breakfast", "COMPOSITE_DISH", 1.0476, 127.27, 5.45, 20.91, 2.73, 220.0, 210.0, "🥣", "salad", "#FFEFE6", "#9B51E0", false);
-        seedFood("AVOCADO_TOAST", "Bánh Mì Bơ Trứng Chần", "Breakfast", "COMPOSITE_DISH", 0.8889, 225.0, 9.38, 18.75, 12.50, 160.0, 180.0, "🥑", "salad", "#E8F8ED", "#27AE60", true);
-
-        seedFood("BROKEN_RICE", "Cơm Tấm Sườn Bì Chả", "Lunch", "COMPOSITE_DISH", 1.0857, 171.05, 10.0, 18.95, 6.32, 380.0, 350.0, "🍚", "salad", "#FFEBE0", "#D95933", false);
-        seedFood("CHICKEN_SALAD", "Salad Ức Gà Áp Chảo", "Lunch", "COMPOSITE_DISH", 0.8929, 168.0, 18.0, 6.0, 4.8, 250.0, 280.0, "🥗", "salad", "#E8F8ED", "#27AE60", true);
-        seedFood("RICE_WHITE_COOKED", "Cơm trắng", "Lunch", "COMPOSITE_DISH", 0.8500, 130.0, 2.7, 28.2, 0.3, 200.0, 235.0, "🍚", "salad", "#F4F6F8", "#4A5568", false);
-        seedFood("BUN_CHA_HA_NOI", "Bún Chả Hà Nội Nướng Than", "Lunch", "COMPOSITE_DISH", 1.0769, 128.57, 6.67, 16.19, 4.29, 420.0, 390.0, "🍲", "vegetable", "#FFF7E0", "#D95933", false);
-        seedFood("BEEF_QUINOA_BOWL", "Cơm Quinoa Bò Áp Chảo", "Lunch", "COMPOSITE_DISH", 1.0323, 153.13, 11.25, 15.0, 5.0, 320.0, 310.0, "🥗", "salad", "#FFEFE6", "#F37340", true);
-
-        seedFood("BEEF_PHO", "Phở Bò Tái Nạm", "Dinner", "COMPOSITE_DISH", 1.1250, 115.56, 7.11, 12.89, 3.56, 450.0, 400.0, "🍜", "vegetable", "#EBF3FF", "#3380D9", false);
-        seedFood("SALMON_STEAK", "Cá Hồi Nướng Măng Tây", "Dinner", "COMPOSITE_DISH", 1.1538, 193.33, 14.0, 2.67, 9.33, 300.0, 260.0, "🥩", "salad", "#FFEFE6", "#F37340", true);
-        seedFood("CANH_CHUA_CA_HOI", "Canh Chua Cá Hồi Nam Bộ", "Dinner", "COMPOSITE_DISH", 1.0526, 77.50, 6.50, 3.50, 4.00, 400.0, 380.0, "🍲", "vegetable", "#EBF3FF", "#3380D9", false);
-        seedFood("GRILLED_CHICKEN_BREAST", "Ức Gà Nướng Rau Củ Cầu Vồng", "Dinner", "COMPOSITE_DISH", 0.9655, 135.71, 15.71, 6.43, 5.00, 280.0, 290.0, "🍗", "salad", "#E8F8ED", "#27AE60", true);
-
-        log.info("[NUTRITION SERVICE] Seeded 15 default nutritional food density profiles.");
-    }
-
-    private void seedFood(String code, String name, String cat, String type, double rho, double kcal, double p, double c, double f, double w, double v, String emoji, String icon, String bg, String icColor, boolean hl) {
-        if (!foodDensityRepository.existsByFoodCode(code)) {
-            foodDensityRepository.save(FoodDensity.builder()
-                    .foodCode(code)
-                    .displayName(name)
-                    .category(cat)
-                    .foodType(type)
-                    .densityGramsPerCm3(BigDecimal.valueOf(rho))
-                    .kcalPer100g(BigDecimal.valueOf(kcal))
-                    .proteinPer100g(BigDecimal.valueOf(p))
-                    .carbPer100g(BigDecimal.valueOf(c))
-                    .fatPer100g(BigDecimal.valueOf(f))
-                    .servingWeightG(BigDecimal.valueOf(w))
-                    .servingVolumeCm3(BigDecimal.valueOf(v))
-                    .emoji(emoji)
-                    .iconType(icon)
-                    .iconBgColor(bg)
-                    .iconColor(icColor)
-                    .isHighlightedMore(hl)
-                    .isActive(true)
-                    .build());
-        }
-    }
-
     @Override
     @Transactional(readOnly = true)
     public List<FoodItemResponseDTO> getActiveFoods(String category) {
@@ -90,6 +40,16 @@ public class NutritionEngineServiceImpl implements NutritionEngineService {
                 : foodDensityRepository.findAllByIsActiveTrue();
 
         return foods.stream().map(this::mapToFoodItemResponse).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FoodItemDTO> getActiveFoodDTOs(String category) {
+        List<FoodDensity> foods = (category != null && !category.isBlank() && !category.equalsIgnoreCase("ALL"))
+                ? foodDensityRepository.findAllByCategoryIgnoreCaseAndIsActiveTrue(category.trim())
+                : foodDensityRepository.findAllByIsActiveTrue();
+
+        return foods.stream().map(this::mapToFoodItemDTO).collect(Collectors.toList());
     }
 
     @Override

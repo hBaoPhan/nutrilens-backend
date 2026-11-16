@@ -14,6 +14,7 @@ public interface NutritionEngineService {
     NutritionAnalysisResponseDTO analyzeVolumetricPortion(VolumetricNutritionRequestDTO request);
     MultiNutritionAnalysisResponseDTO analyzeMultiVolumetricPortion(MultiVolumetricNutritionRequestDTO request);
     List<FoodItemResponseDTO> getActiveFoods(String category);
+    List<FoodItemDTO> getActiveFoodDTOs(String category);
     FoodItemDTO getFoodByCode(String foodCode);
     FoodItemDTO getFoodById(Long id);
     NutritionResolutionDTO resolveSingleFood(String foodCode, Double volumeCm3, Double portionRatio, Double userWeightKg);

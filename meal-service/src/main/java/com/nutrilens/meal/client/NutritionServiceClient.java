@@ -28,52 +28,17 @@ public interface NutritionServiceClient {
     class NutritionServiceClientFallback implements NutritionServiceClient {
         @Override
         public FoodItemDTO getFoodByCode(String foodCode) {
-            return FoodItemDTO.builder()
-                    .foodCode(foodCode)
-                    .displayName(foodCode)
-                    .densityGPerCm3(1.0)
-                    .kcalPer100g(150.0)
-                    .proteinPer100g(10.0)
-                    .carbPer100g(15.0)
-                    .fatPer100g(5.0)
-                    .build();
+            return null;
         }
 
         @Override
         public FoodItemDTO getFoodById(Long id) {
-            return FoodItemDTO.builder()
-                    .id(id)
-                    .foodCode("FOOD_" + id)
-                    .displayName("Food Item " + id)
-                    .densityGPerCm3(1.0)
-                    .kcalPer100g(150.0)
-                    .proteinPer100g(10.0)
-                    .carbPer100g(15.0)
-                    .fatPer100g(5.0)
-                    .build();
+            return null;
         }
 
         @Override
         public NutritionResolutionDTO resolveFood(String foodCode, Double volumeCm3, Double portionRatio, Double userWeightKg) {
-            double vol = volumeCm3 != null ? volumeCm3 : 150.0;
-            double ratio = portionRatio != null ? portionRatio : 1.0;
-            double effVol = vol * ratio;
-            double weight = effVol * 1.0;
-            double kcal = weight * 1.5;
-            return NutritionResolutionDTO.builder()
-                    .foodCode(foodCode)
-                    .foodName(foodCode)
-                    .densityGPerCm3(1.0)
-                    .rawVolumeCm3(vol)
-                    .portionRatio(ratio)
-                    .effectiveVolumeCm3(effVol)
-                    .estimatedWeightG(weight)
-                    .calculatedKcal(kcal)
-                    .proteinG(weight * 0.1)
-                    .carbG(weight * 0.15)
-                    .fatG(weight * 0.05)
-                    .confidenceScore(0.90)
-                    .build();
+            return null;
         }
     }
 }

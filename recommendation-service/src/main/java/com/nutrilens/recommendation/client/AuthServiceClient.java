@@ -22,18 +22,11 @@ public interface AuthServiceClient {
 class AuthServiceClientFallback implements AuthServiceClient {
     @Override
     public UserSummaryDTO getUserSummary(String username) {
-        return UserSummaryDTO.builder()
-                .id(1L)
-                .username(username != null ? username : "guest")
-                .fullName("Guest User")
-                .dailyCalorieGoal(2000)
-                .fitnessGoal("MAINTAIN")
-                .weightKg(65.0)
-                .build();
+        return null;
     }
 
     @Override
     public UserSummaryDTO getUserSummaryById(Long id) {
-        return getUserSummary("user_" + id);
+        return null;
     }
 }

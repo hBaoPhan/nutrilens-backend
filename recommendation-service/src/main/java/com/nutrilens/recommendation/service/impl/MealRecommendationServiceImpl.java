@@ -105,24 +105,28 @@ public class MealRecommendationServiceImpl implements MealRecommendationService 
             }
         }
 
-        String dishName = (chosenDish != null) ? chosenDish.getDisplayName() : "Gỏi Cuốn Tôm Thịt";
-        String foodCode = (chosenDish != null) ? chosenDish.getFoodCode() : "VIET_GOI_CUON";
+        String dishName = (chosenDish != null) ? chosenDish.getDisplayName() : "";
+        String foodCode = (chosenDish != null) ? chosenDish.getFoodCode() : "";
 
         // 6. Generate AI Nutrition Guidance
         StringBuilder advice = new StringBuilder();
-        advice.append("Bạn còn lại khoảng ").append(remainingKcal.setScale(0, RoundingMode.HALF_UP)).append(" kcal cho ngày hôm nay. ");
-
-        if ("SURPLUS".equals(status)) {
-            advice.append("Lượng calo đã gần chạm ngưỡng mục tiêu TDEE. Cho ").append(mealType)
-                  .append(", hãy ưu tiên các món thanh đạm, giàu rau xanh và nước dùng trong như ")
-                  .append(dishName).append(" để giữ mức cân bằng lý tưởng.");
-        } else if ("DEFICIT".equals(status)) {
-            advice.append("Bạn còn thâm hụt calo khá nhiều. Hãy nạp đủ năng lượng với món ")
-                  .append(dishName).append(" giàu dinh dưỡng, kết hợp protein để tối ưu hóa quá trình trao đổi chất.");
+        if (chosenDish == null) {
+            advice.append("Hiện chưa có món ăn nào trong cơ sở dữ liệu để đưa ra gợi ý.");
         } else {
-            advice.append("Bạn đang duy trì tiến độ calo rất xuất sắc! Món ")
-                  .append(dishName).append(" là sự lựa chọn hài hòa cả về đạm, tinh bột và vi chất cho ")
-                  .append(mealType).append(".");
+            advice.append("Bạn còn lại khoảng ").append(remainingKcal.setScale(0, RoundingMode.HALF_UP)).append(" kcal cho ngày hôm nay. ");
+
+            if ("SURPLUS".equals(status)) {
+                advice.append("Lượng calo đã gần chạm ngưỡng mục tiêu TDEE. Cho ").append(mealType)
+                      .append(", hãy ưu tiên các món thanh đạm, giàu rau xanh và nước dùng trong như ")
+                      .append(dishName).append(" để giữ mức cân bằng lý tưởng.");
+            } else if ("DEFICIT".equals(status)) {
+                advice.append("Bạn còn thâm hụt calo khá nhiều. Hãy nạp đủ năng lượng với món ")
+                      .append(dishName).append(" giàu dinh dưỡng, kết hợp protein để tối ưu hóa quá trình trao đổi chất.");
+            } else {
+                advice.append("Bạn đang duy trì tiến độ calo rất xuất sắc! Món ")
+                      .append(dishName).append(" là sự lựa chọn hài hòa cả về đạm, tinh bột và vi chất cho ")
+                      .append(mealType).append(".");
+            }
         }
 
         List<FoodItemDTO> candidates = (dishes != null)

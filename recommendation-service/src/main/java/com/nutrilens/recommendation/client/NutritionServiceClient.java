@@ -13,7 +13,7 @@ import java.util.List;
 @FeignClient(name = "nutrition-service", fallback = NutritionServiceClientFallback.class)
 public interface NutritionServiceClient {
 
-    @GetMapping("/api/nutrition/foods")
+    @GetMapping("/api/nutrition/internal/foods")
     List<FoodItemDTO> getFoods(@RequestParam(value = "category", required = false) String category);
 }
 
@@ -21,18 +21,6 @@ public interface NutritionServiceClient {
 class NutritionServiceClientFallback implements NutritionServiceClient {
     @Override
     public List<FoodItemDTO> getFoods(String category) {
-        return Collections.singletonList(
-                FoodItemDTO.builder()
-                        .id(1L)
-                        .foodCode("VIET_COM_TAM")
-                        .displayName("Cơm Tấm Sườn Bì Chả")
-                        .category("Lunch")
-                        .densityGPerCm3(0.85)
-                        .kcalPer100g(159.0)
-                        .proteinPer100g(7.8)
-                        .carbPer100g(22.5)
-                        .fatPer100g(4.2)
-                        .build()
-        );
+        return Collections.emptyList();
     }
 }

@@ -19,28 +19,12 @@ public interface AuthServiceClient {
     class AuthServiceClientFallback implements AuthServiceClient {
         @Override
         public UserSummaryDTO getUserSummary(String username) {
-            return UserSummaryDTO.builder()
-                    .id(0L)
-                    .username(username)
-                    .fullName(username)
-                    .weightKg(65.0)
-                    .heightCm(170.0)
-                    .dailyCalorieGoal(2000)
-                    .role("ROLE_USER")
-                    .build();
+            return null;
         }
 
         @Override
         public UserSummaryDTO getUserSummaryById(Long id) {
-            return UserSummaryDTO.builder()
-                    .id(id)
-                    .username("user_" + id)
-                    .fullName("NutriLens User")
-                    .weightKg(65.0)
-                    .heightCm(170.0)
-                    .dailyCalorieGoal(2000)
-                    .role("ROLE_USER")
-                    .build();
+            return null;
         }
     }
 }

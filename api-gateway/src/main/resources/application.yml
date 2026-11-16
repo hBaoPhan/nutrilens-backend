@@ -17,23 +17,23 @@ spring:
           predicates:
             - Path=/api/auth/**, /api/v1/auth/**
 
-        # 2. Nutrition Service Route
+        # 2. Recommendation Service Route (Must be BEFORE nutrition-service to match /nutrition/recommendations/**)
+        - id: recommendation-service
+          uri: lb://RECOMMENDATION-SERVICE
+          predicates:
+            - Path=/api/recommendations/**, /api/v1/recommendations/**, /api/nutrition/recommendations/**, /api/v1/nutrition/recommendations/**
+
+        # 3. Meal Service Route (Must be BEFORE nutrition-service to match /nutrition/meal-logs/**)
+        - id: meal-service
+          uri: lb://MEAL-SERVICE
+          predicates:
+            - Path=/api/meal-logs/**, /api/v1/meal-logs/**, /api/nutrition/meal-logs/**, /api/v1/nutrition/meal-logs/**, /api/admin/stats/**, /api/v1/admin/stats/**
+
+        # 4. Nutrition Service Route
         - id: nutrition-service
           uri: lb://NUTRITION-SERVICE
           predicates:
             - Path=/api/nutrition/**, /api/v1/nutrition/**, /api/admin/foods/**, /api/v1/admin/foods/**, /api/tips/**, /api/v1/tips/**
-
-        # 3. Meal Service Route
-        - id: meal-service
-          uri: lb://MEAL-SERVICE
-          predicates:
-            - Path=/api/meal-logs/**, /api/v1/nutrition/meal-logs/**, /api/admin/stats/**, /api/v1/admin/stats/**
-
-        # 4. Recommendation Service Route
-        - id: recommendation-service
-          uri: lb://RECOMMENDATION-SERVICE
-          predicates:
-            - Path=/api/recommendations/**, /api/v1/recommendations/**
 
         # 5. Python FastAPI AI Service Route
         - id: ai-service

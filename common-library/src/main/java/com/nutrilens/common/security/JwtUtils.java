@@ -14,13 +14,7 @@ import java.util.function.Function;
 public class JwtUtils {
 
     public static SecretKey getSigningKey(String secret) {
-        byte[] keyBytes;
-        try {
-            keyBytes = Decoders.BASE64.decode(secret);
-        } catch (Exception e) {
-            keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        }
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public static Claims extractAllClaims(String token, String secret) {

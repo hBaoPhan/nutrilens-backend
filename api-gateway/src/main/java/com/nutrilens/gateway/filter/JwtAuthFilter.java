@@ -30,11 +30,15 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
             "/api/nutrition/foods",
             "/api/v1/nutrition/foods",
             "/api/nutrition/tips",
+            "/api/v1/nutrition/tips",
+            "/api/tips",
             "/api/v1/tips",
             "/api/nutrition/resolve-volume",
             "/api/v1/nutrition/resolve-volume",
             "/api/nutrition/resolve-volume-multi",
             "/api/v1/nutrition/resolve-volume-multi",
+            "/api/nutrition/multi-volumetric-analyze",
+            "/api/v1/nutrition/multi-volumetric-analyze",
             "/api/ai/",
             "/predict"
     );

@@ -12,6 +12,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponseDTO {
+    @Builder.Default
+    private Boolean success = true;
+    @Builder.Default
+    private String message = "Success";
     private String token;
     @Builder.Default
     private String tokenType = "Bearer";
