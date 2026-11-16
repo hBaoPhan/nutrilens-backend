@@ -1,0 +1,52 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lowerCaseServiceId: true
+      routes:
+        # 1. Auth Service Route
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**, /api/v1/auth/**
+
+        # 2. Nutrition Service Route
+        - id: nutrition-service
+          uri: lb://NUTRITION-SERVICE
+          predicates:
+            - Path=/api/nutrition/**, /api/v1/nutrition/**, /api/admin/foods/**, /api/v1/admin/foods/**, /api/tips/**, /api/v1/tips/**
+
+        # 3. Meal Service Route
+        - id: meal-service
+          uri: lb://MEAL-SERVICE
+          predicates:
+            - Path=/api/meal-logs/**, /api/v1/nutrition/meal-logs/**, /api/admin/stats/**, /api/v1/admin/stats/**
+
+        # 4. Recommendation Service Route
+        - id: recommendation-service
+          uri: lb://RECOMMENDATION-SERVICE
+          predicates:
+            - Path=/api/recommendations/**, /api/v1/recommendations/**
+
+        # 5. Python FastAPI AI Service Route
+        - id: ai-service
+          uri: ${AI_SERVICE_URL:http://localhost:8000}
+          predicates:
+            - Path=/api/ai/**, /predict/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET:9a7f8e6d5c4b3a210fedcba9876543210123456789abcdef0123456789abcdef}
