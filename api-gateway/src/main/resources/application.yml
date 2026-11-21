@@ -39,7 +39,7 @@ spring:
         - id: ai-service
           uri: ${AI_SERVICE_URL:http://localhost:8000}
           predicates:
-            - Path=/api/ai/**, /predict/**
+            - Path=/api/ai/**, /predict/**, /api/chatbot/**, /api/v1/chatbot/**
 
 eureka:
   client:

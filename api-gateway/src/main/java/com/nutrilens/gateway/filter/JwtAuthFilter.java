@@ -22,6 +22,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     @Value("${jwt.secret:9a7f8e6d5c4b3a210fedcba9876543210123456789abcdef0123456789abcdef}")
     private String jwtSecret;
 
+    // STRICT WHITELIST: Only truly public, unauthenticated endpoints are permitted without a JWT token.
     private static final List<String> PUBLIC_ENDPOINTS = List.of(
             "/api/auth/login",
             "/api/v1/auth/login",
@@ -48,30 +49,57 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        // 1. Allow public endpoints
+        // 1. Allow public endpoints (Optional Token Relay if client provides valid Authorization)
         boolean isPublic = PUBLIC_ENDPOINTS.stream().anyMatch(path::startsWith);
+        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+
         if (isPublic) {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                try {
+                    if (JwtUtils.validateToken(token, jwtSecret) && !JwtUtils.isTokenExpired(token, jwtSecret)) {
+                        Claims claims = JwtUtils.extractAllClaims(token, jwtSecret);
+                        String username = claims.getSubject();
+                        String role = (String) claims.get("role");
+
+                        ServerHttpRequest mutatedRequest = request.mutate()
+                                .header("X-User-Username", username != null ? username : "")
+                                .header("X-User-Role", role != null ? role : "")
+                                .build();
+
+                        return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                    }
+                } catch (Exception ignored) {
+                    // Non-blocking for strictly public endpoints
+                }
+            }
             return chain.filter(exchange);
         }
 
-        // 2. Extract Authorization header
-        String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        // 2. Strict Authentication: Protected endpoints MUST provide Bearer JWT token
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return onError(exchange, "Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
+            return onError(exchange, "Unauthorized: Missing or invalid Authorization header", HttpStatus.UNAUTHORIZED);
         }
 
         String token = authHeader.substring(7);
 
-        // 3. Validate Token
+        // 3. Cryptographic Signature & Expiry Validation
         if (!JwtUtils.validateToken(token, jwtSecret) || JwtUtils.isTokenExpired(token, jwtSecret)) {
-            return onError(exchange, "Token is expired or invalid", HttpStatus.UNAUTHORIZED);
+            return onError(exchange, "Unauthorized: Token is expired or signature is invalid", HttpStatus.UNAUTHORIZED);
         }
 
-        // 4. Token Relay: Extract claims and pass down to downstream services
+        // 4. Role-Based Access Control (RBAC) & Token Relay
         try {
             Claims claims = JwtUtils.extractAllClaims(token, jwtSecret);
             String username = claims.getSubject();
             String role = (String) claims.get("role");
+
+            // RBAC Enforcement: Administrative endpoints (/admin/**) strictly require ROLE_ADMIN
+            if (path.startsWith("/api/admin/") || path.startsWith("/api/v1/admin/")) {
+                if (!"ROLE_ADMIN".equalsIgnoreCase(role)) {
+                    return onError(exchange, "Forbidden: Administrative privileges required", HttpStatus.FORBIDDEN);
+                }
+            }
 
             ServerHttpRequest mutatedRequest = request.mutate()
                     .header("X-User-Username", username != null ? username : "")
@@ -80,7 +108,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         } catch (Exception e) {
-            return onError(exchange, "Failed to parse JWT claims", HttpStatus.UNAUTHORIZED);
+            return onError(exchange, "Unauthorized: Failed to parse JWT claims", HttpStatus.UNAUTHORIZED);
         }
     }
 
